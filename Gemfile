@@ -1,6 +1,7 @@
 source "https://rubygems.org"
 source "https://BnrJb6FZyzspBboNJzYZ@gem.fury.io/govuk/"
 
+gem "puma", "1.6.3"
 gem "sinatra", "1.4.2"
 gem "rake", "0.9.2", :require => false
 gem "multi_json", "1.3.6"
