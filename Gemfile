@@ -20,4 +20,5 @@ group :test do
   gem 'rack-test'
   gem 'mocha', :require => false
   gem 'webmock', '1.9.3', :require => false
+  gem 'nokogiri', :require => false
 end

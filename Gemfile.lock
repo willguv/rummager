@@ -30,6 +30,7 @@ GEM
     mocha (0.13.2)
       metaclass (~> 0.0.1)
     multi_json (1.3.6)
+    nokogiri (1.5.9-java)
     polyglot (0.3.3)
     puma (1.6.3-java)
       rack (~> 1.2)
@@ -73,6 +74,7 @@ DEPENDENCIES
   minitest (= 4.6.1)
   mocha
   multi_json (= 1.3.6)
+  nokogiri
   puma (= 1.6.3)
   rack (= 1.5.2)
   rack-test
