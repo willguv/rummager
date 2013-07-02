@@ -32,7 +32,10 @@ namespace :rummager do
       old_index = index_group.current
 
       if old_index.exists?
-        new_index.populate_from old_index
+        new_index.with_refresh_interval(1) do
+          new_index.populate_from old_index
+        end
+        new_index.commit
         new_count = new_index.all_documents.size
         old_count = old_index.all_documents.size
         unless new_count == old_count

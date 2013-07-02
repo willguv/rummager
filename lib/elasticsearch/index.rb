@@ -95,6 +95,19 @@ module Elasticsearch
       @client.post("_bulk", payload + "\n", content_type: :json)
     end
 
+    # Run the given block with the given refresh interval (in seconds, or
+    # `false` to disable refreshes entirely). This is useful for large bulk
+    # operations, such as index repopulation.
+    def with_refresh_interval(interval, &block)
+      @client.put("_settings", refresh_setting_payload(interval))
+      begin
+        block.call
+      ensure
+        # Restore the refresh setting
+        @client.put("_settings", refresh_setting_payload(1))
+      end
+    end
+
     def populate_from(source_index)
       total_indexed = 0
       all_docs = source_index.all_documents
@@ -253,6 +266,13 @@ module Elasticsearch
 
     def with_promotion(document_hash)
       result_promoter.with_promotion(document_hash)
+    end
+
+    # Generate a body to post for refresh intervals
+    # The interval can either be `false` (to disable) or a number of seconds
+    def refresh_setting_payload(interval)
+      interval_string = (interval == false ? "-1" : "#{interval}s")
+      { "index" => { "refresh_interval" => interval_string } }.to_json
     end
   end
 end
