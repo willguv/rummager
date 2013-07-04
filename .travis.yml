@@ -6,8 +6,10 @@ env:
 services:
   - elasticsearch
 before_install:
+- sudo add-apt-repository ppa:gds/govuk
 - sudo apt-get update -qq
 - sudo apt-get install -qq aspell aspell-en libaspell-dev
+- sudo apt-get install -qq -v 0.20.6-ppa1~lucid1 elasticsearch
 script:
   - bundle exec rake
 bundler_args: --without=development
