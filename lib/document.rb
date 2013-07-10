@@ -31,9 +31,6 @@ class SearchIndexEntry
     Hash.new.tap do |doc|
       @field_names.each do |key|
         value = get(key)
-        if value.is_a?(Array)
-          value = value.map {|v| v.is_a?(SearchIndexEntry) ? v.elasticsearch_export : v }
-        end
         unless value.nil? or (value.respond_to?(:empty?) and value.empty?)
           doc[key] = value
         end
@@ -44,11 +41,7 @@ class SearchIndexEntry
 
   def to_hash
     Hash[@field_names.map { |key|
-      value = get(key)
-      if value.is_a?(Array)
-        value = value.map { |v| v.is_a?(SearchIndexEntry) ? v.to_hash : v }
-      end
-      [key.to_s, value]
+      [key.to_s, get(key)]
     }.select{ |key, value|
       ![nil, []].include?(value)
     }]
