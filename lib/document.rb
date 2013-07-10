@@ -76,18 +76,6 @@ private
   end
 end
 
-class Link < SearchIndexEntry
-
-  def initialize(attributes)
-    super([:title, :link, :link_order], attributes)
-  end
-
-  def update_attributes!(attributes)
-    super
-    self.set(:link_order, attributes[:link_order] || attributes["link_order"] || 0)
-  end
-end
-
 class Document < SearchIndexEntry
 
   def self.from_hash(hash, mappings)
