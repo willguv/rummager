@@ -23,7 +23,7 @@ namespace :rummager do
     end
   end
 
-  desc "Migrates an index group to a new index"
+  desc "Migrates an index group to a new index, or creates new indexes from the schema"
   task :migrate_index do
     index_names.each do |index_name|
       index_group = search_server.index_group(index_name)
