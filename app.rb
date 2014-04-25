@@ -361,7 +361,7 @@ class Rummager < Sinatra::Application
       })
     end
 
-    searcher = UnifiedSearcher.new(unified_index, metasearch_index, registries, registry_by_field, suggester)
+    searcher = UnifiedSearcher.new(unified_index, metasearch_index, registries, registry_by_field, suggester, self)
     MultiJson.encode searcher.search(parser.parsed_params)
   end
 

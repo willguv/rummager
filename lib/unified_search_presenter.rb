@@ -17,7 +17,7 @@ class UnifiedSearchPresenter
   def initialize(es_response, start, index_names, applied_filters = {},
                  facet_fields = {}, registries = {},
                  registry_by_field = {}, suggestions = [],
-                 facet_examples={})
+                 facet_examples={}, app)
     @start = start
     @results = es_response["hits"]["hits"].map do |result|
       doc = result.delete("fields")
@@ -33,6 +33,7 @@ class UnifiedSearchPresenter
     @registry_by_field = registry_by_field
     @suggestions = suggestions
     @facet_examples = facet_examples
+    @app = app
   end
 
   def present
@@ -157,7 +158,14 @@ private
     result = {}
     @facets.each do |field, facet_info|
       facet_parameters = @facet_fields[field]
+
+      facet_counts = @app.facet_count_cache(field).counts
+      requested_count = @facet_fields[field]
       options = facet_info["terms"]
+      options.sort_by! do |option|
+        -(option["count"].fdiv facet_counts.fetch(option["term"], 100))
+      end
+      display_options = options.slice(0, requested_count)
       result[field] = {
         options: facet_options(field, options, facet_parameters),
         documents_with_no_value: facet_info["missing"],

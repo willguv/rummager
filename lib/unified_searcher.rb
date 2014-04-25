@@ -8,12 +8,13 @@ class UnifiedSearcher
 
   attr_reader :index, :registries, :registry_by_field, :suggester
 
-  def initialize(index, metaindex, registries, registry_by_field, suggester)
+  def initialize(index, metaindex, registries, registry_by_field, suggester, app)
     @index = index
     @metaindex = metaindex
     @registries = registries
     @registry_by_field = registry_by_field
     @suggester = suggester
+    @app = app
   end
 
   # Search and combine the indices and return a hash of ResultSet objects
@@ -32,6 +33,7 @@ class UnifiedSearcher
       registry_by_field,
       suggested_queries(params[:query]),
       facet_examples,
+      @app,
     ).present
   end
 
