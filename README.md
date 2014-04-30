@@ -109,6 +109,9 @@ $ ./bin/health_check -d
 
 Then run against your chosen indices:
 
-$ ./bin/health_check government mainstream
+$ ./bin/health_check government mainstream detailed
 
 By default it will run against the local search instance. You can run against a remote search service using the --json or --html options.
+
+- JSON unified search API: `./bin/health_check government mainstream detailed -j http://search.dev.gov.uk/unified_search.json`
+- JSON old search API: `./bin/health_check government mainstream detailed -j http://search.dev.gov.uk/govuk/search.json`
