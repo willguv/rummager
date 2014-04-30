@@ -52,7 +52,7 @@ class UnifiedSearchBuilder
             should: [core_query, promoted_items_query].compact
           }
         },
-        filters: format_boosts + [time_boost]
+        filters: format_boost_query_fragments + [time_boost_query_fragment]
       }
     }
   end
@@ -281,7 +281,7 @@ class UnifiedSearchBuilder
     }
   end
 
-  def boosted_formats
+  def format_biases
     {
       # Mainstream formats
       "smart-answer"      => 1.5,
@@ -297,8 +297,8 @@ class UnifiedSearchBuilder
     }
   end
 
-  def format_boosts
-    boosted_formats.map do |format, boost|
+  def format_boost_query_fragments
+    format_biases.map do |format, boost|
       {
         filter: { term: { format: format } },
         boost: boost
@@ -310,7 +310,7 @@ class UnifiedSearchBuilder
   # Curve for 2 months: http://www.wolframalpha.com/share/clip?f=d41d8cd98f00b204e9800998ecf8427e5qr62u0si
   #
   # Behaves as a freshness boost for newer documents with a public_timestamp and search_format_types announcement
-  def time_boost
+  def time_boost_query_fragment
     {
       filter: { term: { search_format_types: "announcement" } },
       script: "((0.05 / ((3.16*pow(10,-11)) * abs(time() - doc['public_timestamp'].date.getMillis()) + 0.05)) + 0.12)"
