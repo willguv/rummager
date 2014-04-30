@@ -281,6 +281,13 @@ class UnifiedSearchBuilder
     }
   end
 
+  # Very high boost - 2.5
+  # High boost - 1.5
+  # Small boost - 1.2
+  # No change - 1
+  # Small penalty - 0.8
+  # High penalty - 0.5
+  # Very high penalty - 0.2
   def format_biases
     {
       # Mainstream formats
