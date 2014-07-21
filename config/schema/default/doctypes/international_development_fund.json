@@ -258,10 +258,10 @@
         "ui_widget_type": "multi-select",
         "preposition": "with value",
         "allowed_values": [
-          {"label": "Up to £100,000", "value": "up-to-100000"},
-          {"label": "£100,001 to £500,000", "value": "100001-500000"},
-          {"label": "£500,001 to £1,000,000", "value": "500001-to-1000000"},
-          {"label": "More than £1,000,000", "value": "more-than-1000000"}
+          {"label": "Up to \u00a3100,000", "value": "up-to-100000"},
+          {"label": "\u00a3100,001 to \u00a3500,000", "value": "100001-500000"},
+          {"label": "\u00a3500,001 to \u00a31,000,000", "value": "500001-to-1000000"},
+          {"label": "More than \u00a31,000,000", "value": "more-than-1000000"}
         ]
       }
     }
