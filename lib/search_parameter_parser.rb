@@ -1,3 +1,5 @@
+require "ostruct"
+
 class BaseParameterParser
 
   # The fields listed here are the only ones which the search results can be
@@ -253,7 +255,7 @@ private
     if fields.empty?
       return DEFAULT_RETURN_FIELDS
     end
-    disallowed_fields = fields - ALLOWED_RETURN_FIELDS
+    disallowed_fields = fields - allowed_return_fields
     fields = fields - disallowed_fields
 
     if disallowed_fields.any?
@@ -292,6 +294,26 @@ private
     end
 
     filters
+  end
+
+  def allowed_return_fields
+    ALLOWED_RETURN_FIELDS + schema_fields
+  end
+
+  def schema_fields
+    schema.fetch("properties").keys
+  end
+
+  def schema
+    schema_mappings
+      .merge( no_document_type => null_schema )
+      .fetch(document_type) {
+        raise "Schema not found for #{document_type}"
+      }
+  end
+
+  def document_type
+    @document_types && @document_types.first
   end
 
   class Filter
@@ -380,6 +402,10 @@ private
     ALLOWED_FILTER_FIELDS + schema_fields
   end
 
+  def allowed_return_fields
+    ALLOWED_RETURN_FIELDS + schema_fields
+  end
+
   def schema_get_field_type(field_name)
     schema
       .fetch("properties")
@@ -420,7 +446,7 @@ private
         field = m[1]
         value = single_param(key)
         if ALLOWED_FACET_FIELDS.include? field
-          facet_parser = FacetParameterParser.new(field, value)
+          facet_parser = FacetParameterParser.new(field, value, allowed_return_fields)
           if facet_parser.valid?
             facets[field] = facet_parser.parsed_params
           else
@@ -462,10 +488,11 @@ private
 end
 
 class FacetParameterParser < BaseParameterParser
-  attr_reader :parsed_params, :errors
+  attr_reader :parsed_params, :errors, :allowed_return_fields
 
-  def initialize(field, value)
+  def initialize(field, value, allowed_return_fields)
     @field = field
+    @allowed_return_fields = allowed_return_fields
     process(value)
   end
 
@@ -569,7 +596,7 @@ private
     if fields.empty?
       return DEFAULT_FACET_EXAMPLE_FIELDS 
     end
-    disallowed_fields = fields - ALLOWED_RETURN_FIELDS
+    disallowed_fields = fields - allowed_return_fields
     fields = fields - disallowed_fields
 
     if disallowed_fields.any?

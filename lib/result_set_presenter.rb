@@ -2,9 +2,10 @@ require "active_support/inflector"
 
 class ResultSetPresenter
 
-  def initialize(result_set, context = {})
+  def initialize(result_set, context = {}, mappings = {})
     @result_set = result_set
     @context = context
+    @mappings = mappings
   end
 
   def present
@@ -24,7 +25,7 @@ private
   end
 
   def build_result(document)
-    result = document.to_hash
+    result = expand_metadata(document.to_hash)
 
     if result['document_series'] && should_expand_document_series?
       result['document_series'] = result['document_series'].map do |slug|
@@ -159,5 +160,40 @@ private
     else
       {"slug" => slug}
     end
+  end
+
+  def expand_metadata(document)
+    params_to_expand, normal_params = document.to_hash.partition { |k, _| 
+      schema_get_expandable_fields(document).include?(k) 
+    }
+    params_to_expand.map { |k, v|
+      document[k] = Array(v).flat_map { |values|
+        schema_get_field_label(document, k, values)
+      }
+    }  
+    document
+  end
+
+  def schema_get_field_label(document, field_name, value)
+    schema(document)
+      .fetch("properties")
+      .fetch(field_name, {})
+      .fetch("details")
+      .fetch("allowed_values")
+      .select {|allowed_value| allowed_value.fetch("value") == value }
+  end
+
+  def schema(document)
+    @mappings.fetch(document.fetch(:_metadata, {}).fetch("_type", nil), {})
+  end
+
+  def schema_get_expandable_fields(document)
+    fields = []
+    schema(document).fetch("properties", {}).select { |k, v|
+      if v.fetch("details", {}).fetch("allowed_values", {}).any?
+        fields << k
+      end
+    }
+    fields
   end
 end
