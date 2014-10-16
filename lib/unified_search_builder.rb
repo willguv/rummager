@@ -368,7 +368,8 @@ class UnifiedSearchBuilder
     # In summary, a clause of the form "N<M" means when there are MORE than
     # N clauses then M clauses should match. So, 2<2 means when there are
     # MORE than 2 clauses then 2 should match.
-    "2<2 3<3 7<50%"
+    #"2<2 3<3 7<50%"
+    "50%"
   end
 
   def must_conditions
